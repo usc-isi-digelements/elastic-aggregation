@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../elastic-aggregation.html">
+    <link rel="import" href="../bower_components/dig-common/dig-common.html">
+  </head>
+  <body>
+
+    <!-- You can use the document as a place to set up your fixtures. -->
+    <test-fixture id="elastic-aggregation-fixture">
+      <template>
+        <elastic-aggregation
+          ejs-agg-function="ejs.TermsAggregation('my_agg').field('age').size(11)">
+        </elastic-aggregation>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('<elastic-aggregation>', function() {
+
+        var myEl;
+
+        setup(function() {
+          myEl = fixture('elastic-aggregation-fixture');
+        });
+
+        test('elastic.js is defined', function() {
+          expect(ejs).to.be.an('object');
+          expect(ejs.TermsAggregation).to.be.a('function');
+        });
+
+        test('size is initialized to correct value', function() {
+          assert.equal(myEl.ejsAggObject.size(), 11);
+        });
+
+        test('defines the "aggregation object" property', function() {
+          assert.equal(myEl.ejsAggObject.field(), 'age');
+        });
+
+      });
+    </script>
+
+  </body>
+</html>

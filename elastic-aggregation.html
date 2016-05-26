@@ -1,0 +1,154 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./bower_components/dig-common/dig-common.html">
+<link rel="import" href="./lodash.html">
+
+<!--
+An element which adds an aggregation query fragment to elastic-search
+component, and makes the result of this aggregation available via the
+agg-result property
+
+Example:
+
+    <elastic-aggregation>
+
+    </elastic-aggregation>
+
+@demo demo/index.html
+-->
+
+<script>
+  Polymer({
+    is: 'elastic-aggregation',
+
+    properties: {
+      /**
+       * The number of buckets to show in the aggregation results.  This field
+       * is optional.  If present, it applies the size to the ejs aggregation
+       */
+      size: {
+        type: Number,
+        value: 10,
+        notify: false,
+        observer: 'setSize'
+      },
+
+      /**
+       * The name of this aggregation.  Each elastic aggregation must have a name 
+       * associated with it; the name is returned in the query results
+       */
+      name: {
+        type: String,
+        readOnly: true,
+        notify: true
+      },
+
+      /**
+       * Raw search results which must be parsed to find the results for this
+       * aggregation.
+       */
+      results: {
+        type: Array,
+        notify: false,
+        observer: 'setAggResult'
+      },
+
+      /**
+       * object that contains the query results of just this aggregation
+       */
+      aggResult: {
+        type: Array,
+        value: []
+      },
+
+      /**
+       * Supply a string that is the elastic.js aggregation fragment.
+       *
+       * Example:
+       *
+       *     <elastic-aggregation
+       *         aggregation="TermsAggregation('agg_name')
+       *         .field('AGG_FIELD').size(10)">
+       *     </elastic-aggregation>
+       *
+       */
+      ejsAggFunction: {
+        type: String,
+        notify: false,
+        observer: 'createEjsAggregation'
+      },
+
+      /**
+       * The aggregation object returned from elastic.js
+       */      
+      ejsAggObject: {
+        type: Object,
+        readOnly: true,
+        notify: true
+      },
+
+      /**
+       * Set of all aggregations for this application.  This should be supplied by
+       * the elastic-search element.
+       */
+      aggregations: {
+        type: Object,
+        notify: true,
+        observer: 'processAggCollection'
+      },
+
+      /**
+       * error from building aggregation object, if any
+       */
+      lastError: {
+        type: Object,
+        readOnly: true,
+        notify: true
+      }
+
+    },
+
+    /**
+     * extract the aggregation name from the expression string.  Ideally,
+     * elastic.js would have a getter function for this.  
+     */
+    getName: function(aggregation) {
+      var start = aggregation.indexOf("('") + 2;
+      var end = aggregation.indexOf("')") - start;
+      if (start < 0 || end < 0) {
+        throw new Error('cannot find name parameter');
+      }
+      this._setName(aggregation.substr(start, end));
+    },
+
+    createEjsAggregation: function (aggregation) {
+      try {
+        if (!aggregation.startsWith('ejs.')) {
+          throw new Error('aggregation string must start with ejs.');
+        }
+        var agg = eval(aggregation); // jshint ignore: line
+        this._setEjsAggObject(agg);
+        this._setName(_getName(aggregation));
+      }
+      catch (err) {
+        this._setLastError(err);
+      }
+    },
+
+    setSize: function(size) {
+      try {
+        this.ejsAggObject.size(size);
+      }
+      catch(err) {
+        this._setLastError(err);
+      }
+    },
+
+    processAggCollection: function (argument) {
+      // body...
+    },
+
+    ready: function() {
+
+    }
+  });
+</script>
