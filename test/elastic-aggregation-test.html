@@ -17,7 +17,7 @@
     <test-fixture id="elastic-aggregation-fixture">
       <template>
         <elastic-aggregation
-          ejs-agg-function="ejs.TermsAggregation('my_agg').field('age').size(11)">
+          ejs-agg-snippet="ejs.TermsAggregation('city_agg').field('city').size(11)">
         </elastic-aggregation>
       </template>
     </test-fixture>
@@ -26,9 +26,12 @@
       suite('<elastic-aggregation>', function() {
 
         var myEl;
+        var results;
 
         setup(function() {
           myEl = fixture('elastic-aggregation-fixture');
+          results = {};
+          myEl.aggregations = new Map();
         });
 
         test('elastic.js is defined', function() {
@@ -40,8 +43,35 @@
           assert.equal(myEl.ejsAggObject.size(), 11);
         });
 
+        test('size is increased from 11 to 20', function () {
+          myEl.size=20;
+          expect(myEl.size).to.be.equal(20);
+          expect(myEl.ejsAggObject.size()).to.be.equal(20);
+        });
+
         test('defines the "aggregation object" property', function() {
-          assert.equal(myEl.ejsAggObject.field(), 'age');
+          assert.equal(myEl.ejsAggObject.field(), 'city');
+        });
+
+        test('name is initialized to correct value', function () {
+          assert.equal(myEl.name, 'city_agg');
+        });
+
+        test('getName function', function() {
+          var a = ejs.TermsAggregation('somename');
+          assert.equal(myEl.getName(a), 'somename');
+          a = ejs.AvgAggregation('someAvgAgg').field('obp');
+          assert.equal(myEl.getName(a), 'someAvgAgg');
+        });
+
+        test('correct results are set in this aggregation element', function () {
+          expect(myEl.aggResults).to.be.an('array');
+        });
+
+        test('name is missing', function () {
+          myEl.ejsAggSnippet="ejs.TermsAggregation().field('city').size(11)";
+          expect(myEl.name).to.be.equal('city_agg');
+          expect(myEl.lastError).to.deep.equal(new Error('aggregation must have a name'));
         });
 
       });

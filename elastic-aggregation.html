@@ -27,7 +27,7 @@ Example:
       size: {
         type: Number,
         value: 10,
-        notify: false,
+        notify: true,
         observer: 'setSize'
       },
 
@@ -48,15 +48,17 @@ Example:
       results: {
         type: Array,
         notify: false,
-        observer: 'setAggResult'
+        observer: 'updateAggResults'
       },
 
       /**
        * object that contains the query results of just this aggregation
        */
-      aggResult: {
+      aggResults: {
         type: Array,
-        value: []
+        value: [],
+        notify: true,
+        readOnly: true
       },
 
       /**
@@ -65,12 +67,12 @@ Example:
        * Example:
        *
        *     <elastic-aggregation
-       *         aggregation="TermsAggregation('agg_name')
+       *         ejs-agg-snippet="TermsAggregation('agg_name')
        *         .field('AGG_FIELD').size(10)">
        *     </elastic-aggregation>
        *
        */
-      ejsAggFunction: {
+      ejsAggSnippet: {
         type: String,
         notify: false,
         observer: 'createEjsAggregation'
@@ -86,13 +88,12 @@ Example:
       },
 
       /**
-       * Set of all aggregations for this application.  This should be supplied by
-       * the elastic-search element.
+       * Collection (Map type) of all aggregations for this application.  
+       * This property should be initialized elsewhere/supplied to this element.
        */
       aggregations: {
         type: Object,
-        notify: true,
-        observer: 'processAggCollection'
+        notify: true
       },
 
       /**
@@ -107,43 +108,64 @@ Example:
     },
 
     /**
-     * extract the aggregation name from the expression string.  Ideally,
-     * elastic.js would have a getter function for this.  
+     * extract the aggregation name from the aggregation string.  No matter
+     * what type of elastic aggregation, it will always have a unique name.
      */
-    getName: function(aggregation) {
-      var start = aggregation.indexOf("('") + 2;
-      var end = aggregation.indexOf("')") - start;
-      if (start < 0 || end < 0) {
-        throw new Error('cannot find name parameter');
-      }
-      this._setName(aggregation.substr(start, end));
+    getName: function(ejsAggObj) {
+      return Object.keys(ejsAggObj.toJSON())[0];
     },
 
+    /**
+     * create ejs aggregation object based on input string.  The string is
+     * checked to ensure that it starts with 'ejs.', better ensuring that 
+     * it is a valid function snippet.
+     */
     createEjsAggregation: function (aggregation) {
       try {
         if (!aggregation.startsWith('ejs.')) {
           throw new Error('aggregation string must start with ejs.');
         }
+
         var agg = eval(aggregation); // jshint ignore: line
+
+        var name = this.getName(agg);
+        if (name === 'undefined') {
+          throw new Error('aggregation must have a name');
+        }
+
         this._setEjsAggObject(agg);
-        this._setName(_getName(aggregation));
+        
+        this._setName(name);
+        this.updateAgg(name, agg);
       }
       catch (err) {
         this._setLastError(err);
       }
     },
 
+    /**
+     * replace the aggregation object stored in aggregationsMap.  name is the key
+     * used in the Map collection
+     */
+    updateAgg: function (name, aggObject) {
+      this.aggregations.set(name, aggObject);
+    },
+
+    /*
+     * TODO: -- update the aggregation stored in the agg collection
+     */
     setSize: function(size) {
       try {
         this.ejsAggObject.size(size);
+        this.updateAgg(this,name, this.ejsAggObject);
       }
       catch(err) {
         this._setLastError(err);
       }
     },
 
-    processAggCollection: function (argument) {
-      // body...
+    updateAggResults: function (results) {
+      // this._setAggResult(results['aggregations'][this.name]);
     },
 
     ready: function() {
