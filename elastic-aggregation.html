@@ -55,8 +55,7 @@ Example:
        * object that contains the query results of just this aggregation
        */
       aggResults: {
-        type: Array,
-        value: [],
+        type: Object,
         notify: true,
         readOnly: true
       },
@@ -146,27 +145,22 @@ Example:
       }
     },
 
-    /*
-     * TODO: -- update the aggregation stored in the agg collection
+    /**
+     * change the number of buckets in the results for this aggregation
      */
     setSize: function(size) {
-      try {
-        this.ejsAggObject.size(size);
-        this.updateAgg(this.name, this.ejsAggObject);
-      }
-      catch(err) {
-        this._setLastError(err);
-      }
+      if (!this.ejsAggObject) return;
+      this.ejsAggObject.size(size);
+      this.aggregations.set(this.name, this.ejsAggObject);
     },
 
-
-
+    /**
+     * 
+     */
     updateAggResults: function (results) {
-      // this._setAggResult(results['aggregations'][this.name]);
+      this._setAggResults(results['aggregations'][this.name]);
+      console.log(JSON.stringify(this.aggResults));
     },
 
-    ready: function() {
-
-    }
   });
 </script>
