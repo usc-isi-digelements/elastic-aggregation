@@ -11,28 +11,6 @@
 
     <p>An example of <code>&lt;elastic-aggregation&gt;</code>:</p>
 
-    <p>Make words! <button id="saybtn">Say Something</button></p>
-    <p>Make lasers! <button id="laserbtn">Fire lasers</button></p>
-
-    <elastic-aggregation author='{"name": "Lord Meowser", "image": "http://lorempixel.com/g/300/200/cats/"}' fancy>
-      <h2>Hello elastic-aggregation</h2>
-    </elastic-aggregation>
-
-    <script>
-      var seedElement = document.querySelector('elastic-aggregation');
-
-      document.querySelector('#saybtn').addEventListener('click', function() {
-        alert(seedElement.sayHello('Hallo!'));
-      });
-
-      document.querySelector('#laserbtn').addEventListener('click', function() {
-        seedElement.fireLasers();
-      });
-
-      document.addEventListener("elastic-aggregation-lasers", function(e) {
-        console.log(e.detail.sound);
-      });
-    </script>
 
   </body>
 </html>
