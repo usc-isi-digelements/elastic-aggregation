@@ -45,7 +45,7 @@ Example:
        * Raw search results which must be parsed to find the results for this
        * aggregation.
        */
-      results: {
+      allResults: {
         type: Array,
         notify: false,
         observer: 'updateAggResults'
@@ -74,8 +74,7 @@ Example:
        */
       ejsAggSnippet: {
         type: String,
-        notify: false,
-        observer: 'createEjsAggregation'
+        notify: false
       },
 
       /**
@@ -107,6 +106,10 @@ Example:
 
     },
 
+    observers: [
+      'updateAgg(ejsAggSnippet, aggregations)'
+    ],
+
     /**
      * extract the aggregation name from the aggregation string.  No matter
      * what type of elastic aggregation, it will always have a unique name.
@@ -120,13 +123,13 @@ Example:
      * checked to ensure that it starts with 'ejs.', better ensuring that 
      * it is a valid function snippet.
      */
-    createEjsAggregation: function (aggregation) {
+    updateAgg: function (ejsAggSnippet, aggregations) {
       try {
-        if (!aggregation.startsWith('ejs.')) {
+        if (!ejsAggSnippet.startsWith('ejs.')) {
           throw new Error('aggregation string must start with ejs.');
         }
 
-        var agg = eval(aggregation); // jshint ignore: line
+        var agg = eval(ejsAggSnippet); // jshint ignore: line
 
         var name = this.getName(agg);
         if (name === 'undefined') {
@@ -136,19 +139,11 @@ Example:
         this._setEjsAggObject(agg);
         
         this._setName(name);
-        this.updateAgg(name, agg);
+        this.aggregations.set(name, agg);
       }
       catch (err) {
         this._setLastError(err);
       }
-    },
-
-    /**
-     * replace the aggregation object stored in aggregationsMap.  name is the key
-     * used in the Map collection
-     */
-    updateAgg: function (name, aggObject) {
-      this.aggregations.set(name, aggObject);
     },
 
     /*
@@ -157,12 +152,14 @@ Example:
     setSize: function(size) {
       try {
         this.ejsAggObject.size(size);
-        this.updateAgg(this,name, this.ejsAggObject);
+        this.updateAgg(this.name, this.ejsAggObject);
       }
       catch(err) {
         this._setLastError(err);
       }
     },
+
+
 
     updateAggResults: function (results) {
       // this._setAggResult(results['aggregations'][this.name]);
