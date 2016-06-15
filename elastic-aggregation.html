@@ -158,8 +158,8 @@ Example:
      * 
      */
     updateAggResults: function (results) {
+      if (!results) return;
       this._setAggResults(results['aggregations'][this.name]);
-      console.log(JSON.stringify(this.aggResults));
     },
 
   });
