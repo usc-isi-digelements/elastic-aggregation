@@ -8,9 +8,28 @@
     <link rel="import" href="../elastic-aggregation.html">
   </head>
   <body unresolved>
+    <template is="dom-bind" id="demo">
+      <p>An example of <code>&lt;elastic-aggregation&gt;</code>:</p>
 
-    <p>An example of <code>&lt;elastic-aggregation&gt;</code>:</p>
+      <elastic-aggregation
+        aggregations='{}'
+        ejs-agg-snippet="ejs.TermsAggregation('agg_name').field('AGG_FIELD').size(10)"
+        ejs-agg-object="{{aggObject}}"
+        last-error="{{error}}">
+      </elastic-aggregation>
 
-
+      <p>aggregations: {}</p>
+      <p>ejs agg snippet: "ejs.TermsAggregation('agg_name').field('AGG_FIELD').size(10)"</p>
+      <p>ejs agg object created by elastic-aggregation: {{stringify(aggObject)}}</p>
+      <p>errors (if any): {{stringify(error)}}</p>
+    </template>
+    <script>
+      (function(document) {
+        var demo = document.querySelector('#demo');
+        demo.stringify = function(obj) {
+          return JSON.stringify(obj);
+        };
+      })(document);
+    </script>
   </body>
 </html>

@@ -2,14 +2,16 @@
 <link rel="import" href="../dig-common/dig-common.html">
 
 <!--
-An element which adds an aggregation query fragment to elastic-search
-component, and makes the result of this aggregation available via the
-agg-result property
+An element that creates an elastic.js aggregation, and adds that aggregation to
+an existing set of aggregations used by an elastic-search component.
 
 Example:
 
-    <elastic-aggregation>
-
+    <elastic-aggregation
+      aggregations='{}'
+      ejs-agg-snippet="ejs.TermsAggregation('agg_name').field('AGG_FIELD').size(10)"
+      ejs-agg-object="{{aggObject}}"
+      last-error="{{error}}">
     </elastic-aggregation>
 
 @demo demo/index.html

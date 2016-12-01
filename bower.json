@@ -4,7 +4,7 @@
   "authors": [
     "Anonymous <anonymous@example.com>"
   ],
-  "description": "An element providing a solution to no problem in particular.",
+  "description": "An element used to create and manage elastic.js aggregations",
   "keywords": [
     "web-component",
     "polymer",
@@ -12,7 +12,7 @@
   ],
   "main": "elastic-aggregation.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/<USERNAME>/seed-element/",
+  "homepage": "https://github.com/DigElements/elastic-aggregation/",
   "ignore": [
     "/.*",
     "/test/"
