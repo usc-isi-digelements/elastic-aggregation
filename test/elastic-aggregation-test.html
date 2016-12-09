@@ -176,6 +176,9 @@
           expect(myEl.aggResults.buckets[2].key).to.equal('sacramento');
         });
 
+        test('does not have html content', function() {
+          expect(Polymer.dom(myEl.root).children.length).to.equal(0);
+        });
       });
     </script>
 
