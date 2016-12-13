@@ -1,14 +1,14 @@
 {
   "name": "elastic-aggregation",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "authors": [
-    "Anonymous <anonymous@example.com>"
+    "Next Century Corporation"
   ],
-  "description": "An element used to create and manage elastic.js aggregations",
+  "description": "A Polymer Element that creates an elastic.js aggregation and adds that aggregation to an existing set of aggregations.",
   "keywords": [
     "web-component",
     "polymer",
-    "seed"
+    "elastic.js"
   ],
   "main": "elastic-aggregation.html",
   "license": "http://polymer.github.io/LICENSE.txt",
@@ -18,11 +18,11 @@
     "/test/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.2.0",
-    "dig-common": "DigElements/dig-common#^0.0.4"
+    "polymer": "Polymer/polymer#^1.7.0",
+    "elastic.js": "DigElements/elastic.js#6639a1030eb071fb762bcdd742fdbf037fb57b24"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
-    "web-component-tester": "^4.0.0"
+    "iron-component-page": "PolymerElements/iron-component-page#^1.1.7",
+    "web-component-tester": "^5.0.0"
   }
 }

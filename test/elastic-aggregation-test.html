@@ -1,43 +1,29 @@
-<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-
-    <!-- Step 1: import the element to test -->
     <link rel="import" href="../elastic-aggregation.html">
-    <link rel="import" href="../bower_components/dig-common/dig-common.html">
-    <script>
-      function getMap() {
-        return new Map();
-      }
-    </script>
   </head>
-  <body>
 
-    <!-- You can use the document as a place to set up your fixtures. -->
+  <body>
     <test-fixture id="elastic-aggregation-fixture">
       <template>
-        <elastic-aggregation
-          ejs-agg-snippet="ejs.TermsAggregation('city_agg').field('city').size(11)"
-          >
+        <elastic-aggregation ejs-agg-snippet="ejs.TermsAggregation('city_agg').field('city').size(11)">
         </elastic-aggregation>
       </template>
     </test-fixture>
 
     <script>
       suite('<elastic-aggregation>', function() {
-
-        var myEl;
+        var element;
         var results;
 
         setup(function() {
-          myEl = fixture('elastic-aggregation-fixture');
+          element = fixture('elastic-aggregation-fixture');
           results = {};
-          myEl.aggregations = new Map();
+          element.aggregations = new Map();
         });
 
         test('elastic.js is defined', function() {
@@ -46,40 +32,40 @@
         });
 
         test('size is initialized to correct value', function() {
-          assert.equal(myEl.ejsAggObject.size(), 11);
+          assert.equal(element.ejsAggObject.size(), 11);
         });
 
         test('aggregations collection is initialized', function () {
-          expect(myEl.aggregations.size).to.be.equal(1);
+          expect(element.aggregations.size).to.be.equal(1);
         });
 
         test('size is increased', function () {
-          myEl.size=20;
-          expect(myEl.size).to.be.equal(20);
-          expect(myEl.ejsAggObject.size()).to.be.equal(20);
-          var agg = myEl.aggregations.get('city_agg');
+          element.size=20;
+          expect(element.size).to.be.equal(20);
+          expect(element.ejsAggObject.size()).to.be.equal(20);
+          var agg = element.aggregations.get('city_agg');
           expect(agg.size()).to.be.equal(20);
         });
 
         test('defines the "aggregation object" property', function() {
-          assert.equal(myEl.ejsAggObject.field(), 'city');
+          assert.equal(element.ejsAggObject.field(), 'city');
         });
 
         test('name is initialized to correct value', function () {
-          assert.equal(myEl.name, 'city_agg');
+          assert.equal(element.name, 'city_agg');
         });
 
-        test('getName function', function() {
+        test('_getName function', function() {
           var a = ejs.TermsAggregation('somename');
-          assert.equal(myEl.getName(a), 'somename');
+          assert.equal(element._getName(a), 'somename');
           a = ejs.AvgAggregation('someAvgAgg').field('obp');
-          assert.equal(myEl.getName(a), 'someAvgAgg');
+          assert.equal(element._getName(a), 'someAvgAgg');
         });
 
         test('name is missing', function() {
-          myEl.ejsAggSnippet="ejs.TermsAggregation().field('city').size(11)";
-          expect(myEl.name).to.be.equal('city_agg');
-          expect(myEl.lastError).to.eql(new Error('aggregation must have a name'));
+          element.ejsAggSnippet="ejs.TermsAggregation().field('city').size(11)";
+          expect(element.name).to.be.equal('city_agg');
+          expect(element.lastError).to.eql(new Error('aggregation must have a name'));
         });
 
         test('aggResults is updated with correct data', function() {
@@ -168,16 +154,16 @@
               }
             }
           }
-          myEl.allResults = results;
-          expect(myEl.aggResults).to.exist;
-          expect(myEl.aggResults).to.be.an('Object');
-          expect(myEl.aggResults.buckets).to.exist;
-          expect(myEl.aggResults.buckets).to.have.length(10);
-          expect(myEl.aggResults.buckets[2].key).to.equal('sacramento');
+          element.allResults = results;
+          expect(element.aggResults).to.exist;
+          expect(element.aggResults).to.be.an('Object');
+          expect(element.aggResults.buckets).to.exist;
+          expect(element.aggResults.buckets).to.have.length(10);
+          expect(element.aggResults.buckets[2].key).to.equal('sacramento');
         });
 
         test('does not have html content', function() {
-          expect(Polymer.dom(myEl.root).children.length).to.equal(0);
+          expect(Polymer.dom(element.root).children.length).to.equal(0);
         });
       });
     </script>

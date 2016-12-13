@@ -1,18 +1,18 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../dig-common/dig-common.html">
+<script src="../elastic.js/dist/elastic.js"></script>
 
 <!--
-An element that creates an elastic.js aggregation, and adds that aggregation to
-an existing set of aggregations used by an elastic-search component.
+A Polymer Element that creates an elastic.js aggregation and adds that aggregation to an existing set of aggregations.
 
-Example:
-
-    <elastic-aggregation
-      aggregations='{}'
-      ejs-agg-snippet="ejs.TermsAggregation('agg_name').field('AGG_FIELD').size(10)"
-      ejs-agg-object="{{aggObject}}"
-      last-error="{{error}}">
-    </elastic-aggregation>
+### Example
+```html
+<elastic-aggregation
+  aggregations='{}'
+  ejs-agg-snippet="ejs.TermsAggregation('agg_name').field('AGG_FIELD').size(10)"
+  ejs-agg-object="{{aggObject}}"
+  last-error="{{error}}">
+</elastic-aggregation>
+```
 
 @demo demo/index.html
 -->
@@ -23,19 +23,28 @@ Example:
 
     properties: {
       /**
+       * (Optional)
+       *
        * The number of buckets to show in the aggregation results.  This field
        * is optional.  If present, it applies the size to the ejs aggregation
+       *
+       * @type {Number}
+       * @default 10
        */
       size: {
         type: Number,
         value: 10,
         notify: true,
-        observer: 'setSize'
+        observer: '_setSize'
       },
 
       /**
+       * (Required)
+       *
        * The name of this aggregation.  Each elastic aggregation must have a name 
        * associated with it; the name is returned in the query results
+       *
+       * @type {String}
        */
       name: {
         type: String,
@@ -44,17 +53,25 @@ Example:
       },
 
       /**
+       * (Required)
+       *
        * Raw search results which must be parsed to find the results for this
        * aggregation.
+       *
+       * @type {Array}
        */
       allResults: {
         type: Array,
         notify: false,
-        observer: 'updateAggResults'
+        observer: '_updateAggResults'
       },
 
       /**
-       * object that contains the query results of just this aggregation
+       * (Output)
+       *
+       * Object that contains the query results of just this aggregation.
+       *
+       * @type {Object}
        */
       aggResults: {
         type: Object,
@@ -63,6 +80,8 @@ Example:
       },
 
       /**
+       * (Required)
+       *
        * Supply a string that is the elastic.js aggregation fragment.
        *
        * Example:
@@ -72,6 +91,7 @@ Example:
        *         .field('AGG_FIELD').size(10)">
        *     </elastic-aggregation>
        *
+       * @type {String}
        */
       ejsAggSnippet: {
         type: String,
@@ -79,7 +99,11 @@ Example:
       },
 
       /**
-       * The aggregation object returned from elastic.js
+       * (Output)
+       *
+       * The aggregation object returned from elastic.js.
+       *
+       * @type {Object}
        */      
       ejsAggObject: {
         type: Object,
@@ -88,8 +112,12 @@ Example:
       },
 
       /**
+       * (Required)
+       *
        * Collection (Map type) of all aggregations for this application.  
        * This property should be initialized elsewhere/supplied to this element.
+       *
+       * @type {Object}
        */
       aggregations: {
         type: Object,
@@ -97,7 +125,11 @@ Example:
       },
 
       /**
-       * error from building aggregation object, if any
+       * (Output)
+       *
+       * Error from building aggregation object, if any.
+       *
+       * @type {Object}
        */
       lastError: {
         type: Object,
@@ -108,23 +140,31 @@ Example:
     },
 
     observers: [
-      'updateAgg(ejsAggSnippet, aggregations)'
+      '_updateAgg(ejsAggSnippet, aggregations)'
     ],
 
     /**
-     * extract the aggregation name from the aggregation string.  No matter
+     * Extract the aggregation name from the aggregation string.  No matter
      * what type of elastic aggregation, it will always have a unique name.
+     *
+     * @param {Object} ejsAggObj
+     * @return {String}
+     * @private
      */
-    getName: function(ejsAggObj) {
+    _getName: function(ejsAggObj) {
       return Object.keys(ejsAggObj.toJSON())[0];
     },
 
     /**
-     * create ejs aggregation object based on input string.  The string is
+     * Create ejs aggregation object based on input string.  The string is
      * checked to ensure that it starts with 'ejs.', better ensuring that 
      * it is a valid function snippet.
+     *
+     * @param {String} ejsAggSnippet
+     * @param {Object} aggregations
+     * @private
      */
-    updateAgg: function (ejsAggSnippet, aggregations) {
+    _updateAgg: function(ejsAggSnippet, aggregations) {
       try {
         if (!ejsAggSnippet.startsWith('ejs.')) {
           throw new Error('aggregation string must start with ejs.');
@@ -132,7 +172,7 @@ Example:
 
         var agg = eval(ejsAggSnippet); // jshint ignore: line
 
-        var name = this.getName(agg);
+        var name = this._getName(agg);
         if (name === 'undefined') {
           throw new Error('aggregation must have a name');
         }
@@ -148,21 +188,26 @@ Example:
     },
 
     /**
-     * change the number of buckets in the results for this aggregation
+     * Change the number of buckets in the results for this aggregation.
+     *
+     * @param {Number} size
+     * @private
      */
-    setSize: function(size) {
+    _setSize: function(size) {
       if (!this.ejsAggObject) return;
       this.ejsAggObject.size(size);
       this.aggregations.set(this.name, this.ejsAggObject);
     },
 
     /**
-     * 
+     * Updates the aggregation results from all the results.
+     *
+     * @param {Array} results
+     * @private
      */
-    updateAggResults: function (results) {
+    _updateAggResults: function(results) {
       if (!results) return;
       this._setAggResults(results['aggregations'][this.name]);
-    },
-
+    }
   });
 </script>
