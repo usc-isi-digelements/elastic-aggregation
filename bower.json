@@ -1,10 +1,9 @@
 {
   "name": "elastic-aggregation",
-  "version": "1.0.9",
-  "authors": [
-    "Next Century Corporation"
-  ],
   "description": "A Polymer Element that creates an elastic.js aggregation and adds that aggregation to an existing set of aggregations.",
+  "version": "1.0.9",
+  "authors": ["Next Century Corporation"],
+  "license": "Apache-2.0",
   "keywords": [
     "web-component",
     "polymer",
