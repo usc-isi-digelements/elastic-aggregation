@@ -1,7 +1,7 @@
 {
   "name": "elastic-aggregation",
   "description": "A Polymer Element that creates an elastic.js aggregation and adds that aggregation to an existing set of aggregations.",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "authors": ["Next Century Corporation"],
   "license": "Apache-2.0",
   "keywords": [
@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.7.0",
-    "elastic.js": "DigElements/elastic.js#6639a1030eb071fb762bcdd742fdbf037fb57b24"
+    "elasticjs-import": "DigElements/elasticjs-import#~1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.1.7",
