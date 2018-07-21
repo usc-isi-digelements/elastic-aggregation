@@ -11,14 +11,14 @@
   ],
   "main": "elastic-aggregation.html",
   "license": "http://polymer.github.io/LICENSE.txt",
-  "homepage": "https://github.com/DigElements/elastic-aggregation/",
+  "homepage": "https://github.com/usc-isi-digelements/elastic-aggregation/",
   "ignore": [
     "/.*",
     "/test/"
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.7.0",
-    "elasticjs-import": "DigElements/elasticjs-import#~1.0.0"
+    "elasticjs-import": "usc-isi-digelements/elasticjs-import#~1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.1.7",
